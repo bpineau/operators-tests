@@ -1,0 +1,18 @@
+apiVersion: metacontroller.k8s.io/v1alpha1
+kind: CompositeController
+metadata:
+  name: mon-controller
+  namespace: tmon
+spec:
+  generateSelector: true
+  resyncPeriodSeconds: 30
+  parentResource:
+    apiVersion: ddhq.com/v1
+    resource: mons
+  hooks:
+    sync:
+      webhook:
+        url: http://mon-controller.tmon/sync
+    finalize:
+      webhook:
+        url: http://mon-controller.tmon/finalize

@@ -1,0 +1,15 @@
+apiVersion: datadoghq.datadoghq.com/v1alpha1
+kind: Monitor
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: monitor-sample
+spec:
+  name: "bpineau kubebuilder test2"
+  query: "avg(last_5m):sum:system.net.bytes_rcvd{host:host0} > 100"
+  message: "a test monitor"
+  type: "metric alert"
+  tags: ["foo:bar", "spam:egg"]
+  options:
+    notify_no_data: false
+    new_host_delay: 42

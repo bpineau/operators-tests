@@ -1,0 +1,14 @@
+apiVersion: ddhq.com/v1
+kind: mon
+metadata:
+  name: test-monitor
+  namespace: tmon
+spec:
+  name: bpineau metacontroller test
+  type: metric alert
+  message: a test monitor
+  query: "avg(last_5m):sum:system.net.bytes_rcvd{host:host0} > 100"
+  tags: ["foo:bar", "spam:egg", "a:b"]
+  options:
+    notify_no_data: false
+    new_host_delay: 43

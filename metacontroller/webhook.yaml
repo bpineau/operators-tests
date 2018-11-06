@@ -1,0 +1,59 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mon-controller
+  namespace: tmon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mon-controller
+  template:
+    metadata:
+      labels:
+        app: mon-controller
+    spec:
+      containers:
+      - name: controller
+        image: python:2.7
+        command:
+          - /bin/bash
+          - -c
+        args:
+          - |
+            pip install datadog
+            exec python /hooks/sync.py
+        env:
+        - name: DATADOG_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dd-api-secret
+              key: DATADOG_API_KEY
+        - name: DATADOG_APP_KEY
+          valueFrom:
+            secretKeyRef:
+              name: dd-api-secret
+              key: DATADOG_APP_KEY
+        - name: DATADOG_HOST
+          valueFrom:
+            secretKeyRef:
+              name: dd-api-secret
+              key: DATADOG_HOST
+        volumeMounts:
+        - name: hooks
+          mountPath: /hooks
+      volumes:
+      - name: hooks
+        configMap:
+          name: mon-controller
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mon-controller
+  namespace: tmon
+spec:
+  selector:
+    app: mon-controller
+  ports:
+  - port: 80
